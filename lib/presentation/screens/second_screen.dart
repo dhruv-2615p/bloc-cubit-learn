@@ -1,10 +1,9 @@
 import 'package:cubit_learn_1/logic/cubit/counter_cubit.dart';
-import 'package:cubit_learn_1/presentation/screens/second_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({
+class SecondScreen extends StatefulWidget {
+  const SecondScreen({
     super.key,
     required this.title,
     required this.color,
@@ -14,10 +13,10 @@ class HomeScreen extends StatefulWidget {
   final Color color;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<SecondScreen> createState() => _SecondScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _SecondScreenState extends State<SecondScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 FloatingActionButton(
-                  heroTag: 'decrement',
+                  heroTag: 'decrement_second',
                   onPressed: () {
                     BlocProvider.of<CounterCubit>(context).decrement();
                     // context.bloc<CounterCubit>().decrement();
@@ -73,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const Icon(Icons.remove),
                 ),
                 FloatingActionButton(
-                  heroTag: 'increment',
+                  heroTag: 'increment_second',
                   onPressed: () {
                     BlocProvider.of<CounterCubit>(context).increment();
                     // context.bloc<CounterCubit>().decrement();
@@ -88,17 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             MaterialButton(
               color: widget.color,
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider.value(
-                      value: BlocProvider.of<CounterCubit>(context),
-                      child: const SecondScreen(
-                          title: 'Second Screen', color: Colors.redAccent),
-                    ),
-                  ),
-                );
-              },
+              onPressed: () {},
               child: const Text('Second Screen'),
             ),
           ],
