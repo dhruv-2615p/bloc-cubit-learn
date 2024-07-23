@@ -21,127 +21,140 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            BlocBuilder<InternetCubit, InternetState>(
-              builder: (context, state) {
-                if (state is InternetConnected &&
-                    state.connectionType == ConnectionType.wifi) {
-                  {
+    return BlocListener<InternetCubit, InternetState>(
+      listener: (context, state) {
+        if (state is InternetConnected &&
+            state.connectionType == ConnectionType.wifi) {
+          {
+            context.read<CounterCubit>().increment();
+          }
+        } else if (state is InternetConnected &&
+            state.connectionType == ConnectionType.mobile) {
+              context.read<CounterCubit>().decrement();
+            }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              BlocBuilder<InternetCubit, InternetState>(
+                builder: (context, state) {
+                  if (state is InternetConnected &&
+                      state.connectionType == ConnectionType.wifi) {
+                    {
+                      return Text(
+                        'Wi-Fi',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium
+                            ?.copyWith(color: Colors.green),
+                      );
+                    }
+                  } else if (state is InternetConnected &&
+                      state.connectionType == ConnectionType.mobile) {
                     return Text(
-                      'Wi-Fi',
+                      'Mobile',
                       style: Theme.of(context)
                           .textTheme
                           .headlineMedium
-                          ?.copyWith(color: Colors.green),
+                          ?.copyWith(color: Colors.red),
+                    );
+                  } else if (state is InternetDisonnected) {
+                    return Text(
+                      'Disconnected',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium
+                          ?.copyWith(color: Colors.grey),
                     );
                   }
-                } else if (state is InternetConnected &&
-                    state.connectionType == ConnectionType.mobile) {
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: Colors.pink,
+                  ));
+                },
+              ),
+              // const Text(
+              //   'You have pushed the button this many times:',
+              // ),
+              BlocConsumer<CounterCubit, CounterState>(
+                listener: (context, state) {
+                  if (state.isIncremented == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Incremented!'),
+                        duration: Duration(milliseconds: 300),
+                      ),
+                    );
+                  } else if (state.isIncremented == false) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Decremented!'),
+                        duration: Duration(milliseconds: 300),
+                      ),
+                    );
+                  }
+                },
+                builder: (context, state) {
                   return Text(
-                    'Mobile',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(color: Colors.red),
+                    state.counterValue.toString(),
+                    style: Theme.of(context).textTheme.headlineMedium,
                   );
-                } else if (state is InternetDisonnected) {
-                  return Text(
-                    'Disconnected',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(color: Colors.grey),
-                  );
-                }
-                return const Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.pink,
-                ));
-              },
-            ),
-            // const Text(
-            //   'You have pushed the button this many times:',
-            // ),
-            BlocConsumer<CounterCubit, CounterState>(
-              listener: (context, state) {
-                if (state.isIncremented == true) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Incremented!'),
-                      duration: Duration(milliseconds: 300),
-                    ),
-                  );
-                } else if (state.isIncremented == false) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Decremented!'),
-                      duration: Duration(milliseconds: 300),
-                    ),
-                  );
-                }
-              },
-              builder: (context, state) {
-                return Text(
-                  state.counterValue.toString(),
-                  style: Theme.of(context).textTheme.headlineMedium,
-                );
-              },
-            ),
-            // const SizedBox(
-            //   height: 24,
-            // ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: [
-            //     FloatingActionButton(
-            //       heroTag: 'decrement',
-            //       onPressed: () {
-            //         BlocProvider.of<CounterCubit>(context).decrement();
-            //         // context.bloc<CounterCubit>().decrement();
-            //       },
-            //       tooltip: 'Decrement',
-            //       child: const Icon(Icons.remove),
-            //     ),
-            //     FloatingActionButton(
-            //       heroTag: 'increment',
-            //       onPressed: () {
-            //         BlocProvider.of<CounterCubit>(context).increment();
-            //         // context.bloc<CounterCubit>().decrement();
-            //       },
-            //       tooltip: 'Increment',
-            //       child: const Icon(Icons.add),
-            //     ),
-            //   ],
-            // ),
-            const SizedBox(
-              height: 30,
-            ),
-            MaterialButton(
-              color: widget.color,
-              onPressed: () {
-                Navigator.of(context).pushNamed('/second');
-              },
-              child: const Text('Second Screen'),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            MaterialButton(
-              color: widget.color,
-              onPressed: () {
-                Navigator.of(context).pushNamed('/third');
-              },
-              child: const Text('Third Screen'),
-            ),
-          ],
+                },
+              ),
+              // const SizedBox(
+              //   height: 24,
+              // ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //   children: [
+              //     FloatingActionButton(
+              //       heroTag: 'decrement',
+              //       onPressed: () {
+              //         BlocProvider.of<CounterCubit>(context).decrement();
+              //         // context.bloc<CounterCubit>().decrement();
+              //       },
+              //       tooltip: 'Decrement',
+              //       child: const Icon(Icons.remove),
+              //     ),
+              //     FloatingActionButton(
+              //       heroTag: 'increment',
+              //       onPressed: () {
+              //         BlocProvider.of<CounterCubit>(context).increment();
+              //         // context.bloc<CounterCubit>().decrement();
+              //       },
+              //       tooltip: 'Increment',
+              //       child: const Icon(Icons.add),
+              //     ),
+              //   ],
+              // ),
+              const SizedBox(
+                height: 30,
+              ),
+              MaterialButton(
+                color: widget.color,
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/second');
+                },
+                child: const Text('Second Screen'),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              MaterialButton(
+                color: widget.color,
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/third');
+                },
+                child: const Text('Third Screen'),
+              ),
+            ],
+          ),
         ),
       ),
     );
